@@ -15,7 +15,9 @@ Our method sets a new state of the art across five diverse benchmarks. Remarkabl
 
 ## 🔬 Method Overview
 
-![Method Overview](docs/images/method.png)
+<div align="center">
+  <img src="docs/images/method.png" alt="Method Overview" width="100%"/>
+</div>
 
 The **Error-Uncertainty (EU) Plane** is a diagnostic tool used to categorize each training sample based on two orthogonal metrics:
 
@@ -24,7 +26,9 @@ The **Error-Uncertainty (EU) Plane** is a diagnostic tool used to categorize eac
 
 By plotting each sample on this plane, the data is partitioned into four distinct quadrants, enabling a principled approach to data pruning.
 
-![Method Pipeline](docs/images/pipeline.png)
+<div align="center">
+  <img src="docs/images/pipeline.png" alt="Method Pipeline" width="100%"/>
+</div>
 
 The pipeline diagram above illustrates our two-stage Q-Tuning strategy: sample-level triage followed by asymmetric token-level pruning, demonstrating how we coordinate both dimensions for optimal data utilization.
 
@@ -44,11 +48,15 @@ Our experiments demonstrate that Q-Tuning often matches or surpasses full-datase
 - On Mistral-7B, the same budget yields 46.2, slightly higher than the full-data result
 - Q-Tuning consistently outperforms existing methods like InfoBatch, PPL, and SparseVLM under the same budgets
 
-![Experimental Results](docs/images/Q_Tuning61.svg)
+<div align="center">
+  <img src="docs/images/Q_Tuning61.svg" alt="Experimental Results" width="100%"/>
+</div>
 
 ## 🔍 Data Pruning Analysis
 
-![Ablation Study](docs/images/ablation_100.png)
+<div align="center">
+  <img src="docs/images/ablation_100.png" alt="Ablation Study" width="100%"/>
+</div>
 
 Our ablation studies demonstrate the effectiveness of Q-Tuning's coordinated pruning approach:
 
