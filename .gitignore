@@ -1,0 +1,13 @@
+# Large data files (>100MB)
+LLaMA-Factory/data/wizard_origin.json
+LLaMA-Factory/data/MathInstruct.json
+LLaMA-Factory/data/wizard.json
+
+# Common patterns
+.DS_Store
+*.pyc
+__pycache__/
+*.log
+*.tmp
+*.temp
+

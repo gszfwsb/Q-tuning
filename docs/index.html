@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Winning the Pruning Gamble: A Unified Approach to Joint Sample and Token Pruning for Efficient Supervised Fine-Tuning"> 
+  <meta name="keywords" content=" Data Pruning, Token Pruning, Large Language Model"> <!-- TODO: add some keywords for search engine -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Winning the Pruning Gamble: A Unified Approach to Joint Sample and Token Pruning for Efficient Supervised Fine-Tuning</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome_6_7_2.all.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome_6_7_2.all.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">
+            Winning the Pruning Gamble: A Unified Approach to Joint Sample and Token Pruning for Efficient Supervised Fine-Tuning
+          </h1>
+
+          <div class="publication-authors">
+              <!-- 作者列表 -->
+            <div class="is-size-4 author-list">
+              <span class="author-block">
+                <a href="https://gszfwsb.github.io/" class="author-name">Shaobo Wang</a><sup class="affiliation">†*e,a</sup>
+              </span>
+              <span class="author-block">
+                <a href="" class="author-name">Jiaming Wang</a><sup class="affiliation">*e,n</sup>
+              </span>
+              <span class="author-block">
+                <a href="" class="author-name">Jiajun Zhang</a><sup class="affiliation">*e,b</sup>
+              </span>
+              <span class="author-block">
+                <a href="" class="author-name">Cong Wang</a><sup class="affiliation">e</sup>
+              </span>
+              <span class="author-block">
+                <a href="" class="author-name">Yue Min</a><sup class="affiliation">e,h</sup>
+              </span>
+              <span class="author-block">
+                <a href="" class="author-name">Zichen Wen</a><sup class="affiliation">e</sup>
+              </span>
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=7udAEzMAAAAJ&hl=en" class="author-name">Fei Huang</a><sup class="affiliation">a</sup>
+              </span>
+              <span class="author-block">
+                <a href="https://hqjiang.com/" class="author-name">Huiqiang Jiang</a><sup class="affiliation">a</sup>
+              </span>
+              <span class="author-block">
+                <a href="https://justinlin610.github.io/" class="author-name">Junyang Lin</a><sup class="affiliation">a</sup>
+              </span>
+              <span class="author-block">
+                <a href="https://liudayiheng.github.io/" class="author-name">Dayiheng Liu</a><sup class="affiliation">a</sup>
+              </span>
+              <span class="author-block">
+                <a href="http://www.zhanglinfeng.tech/" class="author-name">Linfeng Zhang</a><sup class="affiliation">†e</sup>
+              </span>
+            
+          </div>
+              <div class="institutions is-size-5">
+              <span class="institution"><sup>e</sup>EPIC Lab, Shanghai Jiao Tong University</span> • 
+              <span class="institution"><sup>a</sup>Alibaba Group</span> • 
+              <span class="institution"><sup>n</sup>Nanjing University</span><br>
+              <span class="institution"><sup>b</sup>Beijing Jiaotong University</span> • 
+              <span class="institution"><sup>h</sup>Hong Kong University of Science and Technology</span>
+              <!-- <span class="institution"><sup>6</sup></span><br> -->
+              <!-- <span class="institution"><sup>7</sup></span><br> -->
+              <!-- <span class="institution"><sup>8</sup></span><br> -->
+            </div>
+          
+            <!-- 贡献说明 -->
+            <div class="contribution-notes is-size-5">
+              <span class="note"><sup>✉️</sup> Corresponding Author</span>
+            </div>
+            <div class="corresponding-authors is-size-5">
+              {shaobowang1009, zhanglinfeng}@sjtu.edu.cn
+            </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <!-- <i class="fas fa-file-pdf"></i> -->
+                      <i class="fa-solid fa-file-pdf" style="color: #ec4646;"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- Arxiv Link. -->
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/Q-tuning/Q-tuning.git"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>GitHub</span>
+                  </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Video -->
+    <div class="columns is-centered">
+      <div class="column">
+        <p>
+            <strong>TL;DR:</strong> As supervised fine-tuning (SFT) evolves from a lightweight post-training step into a compute-intensive phase rivaling mid-training in scale, data efficiency has become critical for aligning large language models (LLMs) under tight budgets. Existing data pruning methods suffer from a fragmented design: they operate either at the sample level or the token level in isolation, failing to jointly optimize both dimensions. This disconnect leads to significant inefficiencies—high-value samples may still contain redundant tokens, while token-level pruning often discards crucial instructional or corrective signals embedded in individual examples. To address this bottleneck, we introduce the Error–Uncertainty (EU) Plane, a diagnostic framework that jointly characterizes the heterogeneous utility of training data across samples and tokens. Guided by this insight, we propose Quadrant-based Tuning (Q-Tuning), a unified framework that strategically coordinates sample pruning and token pruning. Q-Tuning employs a two-stage strategy: first, it performs sample-level triage to retain examples rich in informative misconceptions or calibration signals; second, it applies an asymmetric token-pruning policy, using a context-aware scoring mechanism to trim less salient tokens exclusively from misconception samples while preserving calibration samples in their entirety. Our method sets a new state of the art across five diverse benchmarks. Remarkably, on SmolLM2-1.7B, Q-Tuning achieves a +38% average improvement over the full-data SFT baseline using only 12.5% of the original training data. As the first dynamic pruning approach to consistently outperform full-data training, Q-Tuning provides a practical and scalable blueprint for maximizing data utilization in budget-constrained LLM SFT. 
+        </p>
+        </div>
+        </div>
+    </br>
+        <h2 class="subtitle has-text-centered">
+          <img src="images/method.png" style="display: block; margin: 0 auto; width: 150%;"/>
+        </h2>
+
+   </div>
+  </div>
+<!-- </section>    
+
+<section class="section"> -->
+
+  <div class="container is-max-desktop">
+    <!-- Abstract -->
+    <div class="columns is-centered has-text-centered">
+      <!-- <div class="column is-four-fifths"> -->
+          <div class="content has-text-justified">
+            <p>  
+            </p>  
+          </div>
+      <!-- </div> -->
+    </div>
+   
+        <!-- <section class="section"> -->
+          <div class="columns is-centered has-text-centered">
+            <h2 class="title is-3"><br>Contributions</h2>
+          </div>
+          <div class="container is-max-desktop">
+          <!-- Q&A Section -->
+          <div class="columns is-centered">
+            <!-- <div class="qa-answer">
+              <div class="a-marker">
+                <span class="a-icon">1</span>
+              </div>
+              <div class="answer-text" style="font-size: 1em;">
+                <p>
+                  In CoTs, the majority of tokens are generated with low entropy, while only a small subset exhibits high entropy. These high-entropy minority tokens often act as "forks" in the reasoning process, guiding the model toward diverse reasoning paths. Maintaining high entropy at these critical forking tokens is beneficial for reasoning performance.
+                </p>
+              </div>
+            </div> -->
+
+            <div class="qa-answer" style="flex-direction: column; gap: 1rem;">
+              <div class="qa-row" style="display: flex; align-items: flex-start; gap: 0.5rem;">
+                <div class="a-marker" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                      <i class="fas fa-ruler-combined fa-2x fa-fw" style="color: #1f6110;"></i>
+                </div>
+                <div class="answer-text" style="font-size: 1em;">
+                  <p>
+                    <b>Generalized Dynamic Data Pruning.</b> We formalize the joint sample-token pruning problem through the Generalized Dynamic Data Pruning framework — a bilevel optimization objective for hybrid pruning strategies.
+                </div>
+              </div>
+
+              <div class="qa-row" style="display: flex; align-items: flex-start; gap: 0.5rem;">
+                <div class="a-marker" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-dna fa-2x fa-fw" style="color: #1f6110;"></i>
+                </div>
+                <div class="answer-text" style="font-size: 1em;">
+                  <p>
+                    <b>Error-Uncertainty (EU) Plane.</b> We introduce the Error-Uncertainty (EU) Plane, a diagnostic tool that quantifies and explains why naive pruning heuristics fail, revealing the heterogeneous value of data across error and uncertainty dimensions.
+                </div>
+              </div>
+
+              <div class="qa-row" style="display: flex; align-items: flex-start; gap: 0.5rem;">
+                <div class="a-marker" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-link fa-2x fa-fw" style="color: #1f6110;"></i>
+                </div>
+                <div class="answer-text" style="font-size: 1em;">
+                  <p>
+                    <b>Q-Tuning.</b> We propose Q-Tuning, the first integrated, diagnosis-driven algorithm for dynamic pruning that coordinates sample and token decisions based on EU Plane insights.
+                </div>
+              </div>
+
+              <!-- <div class="qa-row" style="display: flex; align-items: flex-start; gap: 0.5rem;">
+                <div class="a-marker" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-chart-bar fa-2x fa-fw" style="color: #1f6110;"></i>
+                </div>
+                <div class="answer-text" style="font-size: 1em;">
+                  <p>
+                    <b>Experimental Results.</b> Experiments demonstrate that we are better than full-data training and all existing pruning baselines, consistently achieving superior performance while using significantly less data and computational resources. For instance, with LLaMA3-8B on GSM8K, Q-Tuning achieves 48.07 using only 35% of the data (surpassing full training by 6.0 and the best baseline by 9.9). </p>
+                </div>
+              </div> -->
+            </div>
+          </div>
+    </div>
+  </div>
+<!-- </section> -->
+
+
+<!-- <section class="section"> -->
+<div class="container is-max-desktop">
+  <!-- Conclusion -->
+  <div class="columns is-centered has-text-centered">
+    <div class="column">
+      <h2 class="title is-3"><br>Method</h2>
+      <div class="content has-text-justified">
+        <p style="text-align: center;font-size: 1.2rem;">
+          <img src="images/pipeline.png" style="display: block; margin: 0 auto; width: 100%;"/>
+        </p>
+        <p>
+          The <b>Error-Uncertainty (EU) Plane</b> is a diagnostic tool used to categorize each training sample based on two orthogonal metrics. 
+          The first axis is error, quantified by perplexity ($\mathrm{PPL}$), which measures how surprising a ground-truth sequence is to the model. 
+          A high $\mathrm{PPL}$ suggests the model finds the data difficult or has a misconception. 
+          The formula is: 
+        </p>
+
+        <p>
+          \[
+          \mathrm{PPL}(x,y;f_\theta)=\exp\Bigg(\frac{\sum_{i\in T(x)} -\log p(y_i\mid x,y_{&lt;i};f_\theta)}{|T(x)|}\Bigg)
+          \]
+        </p>
+
+        <p>
+          The second axis is uncertainty, quantified by predictive entropy ($\mathrm{Ent}$), which measures the model's indecision or how broadly it distributes its probability predictions, regardless of correctness. 
+          The formula is:
+        </p>
+
+        <p>
+          \[
+          \mathrm{Ent}(x,y;f_\theta)=\frac{\sum_{i\in T(x,y)}\Big(-\sum_{v\in\mathcal V}p(v\mid x,y_{&lt;i};f_\theta)\log p(v\mid x,y_{&lt;i};f_\theta)\Big)}{|T(x)|}
+          \]
+        </p>
+
+        <p>
+          By plotting each sample on this plane, the data is partitioned into four distinct quadrants, enabling a principled approach to data pruning.
+        </p>
+
+        <p>
+          <b>Sample-level pruning</b> is the first stage of the Q-Tuning method, which operates on the entire training batch. Using the EU Plane coordinates for each sample, this stage aims to discard uninformative data points entirely. Specifically, it discards samples that fall into the "Harmful Noise" (high error, low uncertainty) and "Redundant Knowledge" (low error, low uncertainty) quadrants. 
+          To achieve a target sample retention ratio, $r_{\text{sample}}$, a bisect search algorithm dynamically determines the quantile thresholds for perplexity and entropy that correctly partition the batch. 
+          Only samples identified as "Valuable Misconceptions" (high error, low uncertainty) and "Calibration Data" (high error, high uncertainty) are kept for the next stage of processing.
+        </p>
+
+        <p>
+          <b>Token-level pruning</b> is the second, more granular stage that is selectively applied only to the samples classified as "Valuable Misconceptions" (Q2) from the previous stage. The goal is to isolate the useful learning signal within these samples by removing locally detrimental or noisy tokens. 
+          For each token, a smoothed importance score, $s_i$, is calculated, which considers both the token's own perplexity and that of its immediate neighbors, preventing the accidental removal of critical tokens that have isolated perplexity spikes. 
+          The formula is: 
+          $$s_i(x,y;f_\theta)=(1-\lambda)\,\mathrm{PPL}_i(x,y;f_\theta)+\lambda\big[\mathrm{PPL}_{i-1}(x,y;f_\theta)+\mathrm{PPL}_{i+1}(x,y;f_\theta)\big]$$
+          Tokens are then ranked by this score, and only the top-$r_{\textrm{token}}$ fraction are retained for the training update. 
+          Samples classified as "Calibration Data" (Q4) are exempt from this process and are preserved in their entirety.
+        </p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- </section> -->
+
+
+<!-- <section class="section"> -->
+  <div class="container is-max-desktop">
+    <!-- Conclusion -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3"><br>Experimental Results</h2>
+
+        <div class="content has-text-justified">
+          <ol>
+            <li>
+Q-Tuning often matches or surpasses full-dataset fine-tuning while using only a fraction of the training budget. On LLaMA2-7B, with 25% of the samples and 70% of the tokens, Q-Tuning achieves 36.9, closely matching the full-data baseline. On Mistral-7B, the same budget yields 46.2, slightly higher than the full-data result.  </li> 
+                  <!-- <img src="picture.png" style="display: block; margin: 0 auto; width: 85%;"/> -->
+
+
+          <li>
+When compared with methods such as InfoBatch, PPL, and SparseVLM, Q-Tuning achieves higher accuracy under the same budgets. For example, with 25% samples and 50% tokens, it improves LLaMA2-7B to 36.5, well above the best baseline. On Mistral-7B under the same setting, Q-Tuning exceeds the strongest baseline by 1.63%.  </li>          
+                  <!-- <img src="picture.png" style="display: block; margin: 0 auto; width: 85%;"/> -->
+                  <!-- <iframe src="images/page_6.pdf" width="800" height="500" style="margin-left: 100px;"></iframe> -->
+
+          </li>
+          <li>
+The advantages of Q-Tuning are consistent across model families and pruning ratios. With 12.5% samples and 50% tokens, it outperforms the best pruning baselines by 3.3 points on LLaMA2-7B and 2.7 points on Mistral-7B. At larger budgets with 50% samples and 70% tokens, Q-Tuning further widens the margin, exceeding the strongest baselines by 2.4 and 3.7 points, respectively, while closely matching full-dataset performance.</li>
+                  <!-- <iframe src="images/page_6.pdf" width="800" height="500" style="margin-left: 100px;"></iframe> -->
+                  <img src="images/Q_Tuning61.svg" style="display: block; margin: 0 auto; width: 85%;"/>
+
+          </li>
+          <li>
+Q-Tuning delivers consistent gains across reasoning benchmarks. On GSM8K, it largely improves LLaMA3-8B, Mistral-7B, and SmolLM-1.7B under the 25% × 70% budget, all surpassing their full-data counterparts. On the more challenging MATH benchmark, Q-Tuning also exceeds the strongest baselines on both LLaMA3-8B and Mistral-7B.
+          </li>
+          <li>
+Q-Tuning scales reliably across model sizes. Averaged over GSM8K and MATH, it reaches 21.5 on LLaMA3-8B, 26.6 on Mistral-7B, and 11.8 on SmolLM-1.7B, all notably higher than their full-dataset counterparts.            
+                  <img src="images/Q_Tuning62.svg" style="display: block; margin: 0 auto; width: 85%;"/>          
+          </li>
+          <!-- <li>
+            
+          </li>
+          <li>
+            
+          </li> -->
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- </section> -->
+
+
+
+
+<!-- <section class="section"> -->
+  <div class="container is-max-desktop">
+    <!-- Conclusion -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3"><br>Ablation study</h2>
+
+        <div class="content has-text-justified">
+          <ol>
+            <strong><b>Can Q-Tuning Outperform Other Methods in Independent Sample and Token Pruning?</b></strong> We conducted ablation studies to evaluate the effectiveness of each pruning strategy on its own. Figure as follow provides a direct comparison: panel (a) shows dynamic sample pruning with all tokens retained, while panel (b) shows dynamic token pruning with all samples retained. In both cases, Q-Tuning consistently outperforms all baseline methods, demonstrating the advantage of coordinating sample and token pruning rather than applying them independently.
+                  <img src="images/ablation_100.png" style="display: block; margin: 0 auto; width: 100%;"/>
+          </ol>
+        </div>
+        <div class="content has-text-justified">
+          <ol>
+            <strong><b>Effectiveness of context awareness λ.</b></strong> We examined the impact of the coefficient λ, which controls neighbor awareness. Moderate values of λ improved performance on GSM8K and SQuAD, while extreme values led to diminishing or unstable gains. In contrast, TriviaQA showed little sensitivity to λ, with performance remaining stable across all settings. These results suggest that Q-Tuning benefits from incorporating neighbor awareness, but only up to a moderate level, beyond which the gains become marginal.
+                  <img src="images/ablation_supp.png" style="display: block; margin: 0 auto; width: 100%;"/>
+            <!-- <p style="font-size: 1.2rem;">
+              content
+            </p> -->
+
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- </section> -->
+
+  <div class="container is-max-desktop">
+    <!-- Conclusion -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3"><br>Conclusion</h2>
+
+        <div class="content has-text-justified">
+          <ol>
+            
+            <!-- <li> -->
+              This work successfully transforms the high-risk endeavor of dynamic data pruning for LLM fine-tuning from a speculative gamble into a reliable, high-performance strategy. By diagnosing the failure modes of naive, one-dimensional heuristics through the novel Error-Uncertainty Plane, we reveal the heterogeneous value of data and the critical need for a nuanced approach. Our proposed Quadrant-based Tuning (Q-Tuning) directly addresses this by implementing a principled, two-stage framework that intelligently coordinates sample-level and token-level pruning decisions based on the diagnostic insights of the EU Plane. This integrated strategy surgically removes harmful or redundant data while preserving and enhancing valuable learning signals, thereby achieving unprecedented efficiency without sacrificing—and often even improving upon—model performance, effectively turning the pruning gamble into a consistently winning bet.
+            <!-- </li> -->
+
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<style>
+  .qa-card {
+    background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin: 2.5rem 0;
+    padding: 2.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .qa-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(255,0,0,0.15); /* 红色 */
+  }
+  
+  .qa-card:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: linear-gradient(180deg, #FF0000 0%, #308030 100%); /* 红到绿 */
+  }
+  
+  .q-marker {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .q-number {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #FF0000; /* 红色 */
+    min-width: 50px;
+    position: relative;
+  }
+  
+  .q-number:after {
+    content: "";
+    position: absolute;
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background: #308030;
+    border-radius: 50%;
+  }
+  
+  .q-icon, .a-icon {
+    font-size: 1.8rem;
+    font-weight: 800;
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  .q-icon {
+    background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%); /* 红色渐变 */
+    color: white;
+  }
+  
+.a-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1f6110;
+  color: white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  margin-right: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+<!-- .a-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2d6a4f;
+  color: white;
+  border-radius: 50%;
+
+} -->
+  .qa-question {
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .question-text {
+    font-size: 1.3rem;
+    color: #840b0b;
+    margin: 0;
+    line-height: 1.5;
+    position: relative;
+    padding-left: 2rem;
+  }
+  
+  .question-text:before {
+    content: "?";
+    position: absolute;
+    left: 0;
+    top: -0.2em;
+    font-size: 1.8em;
+    color: #FF0000; /* 红色 */
+    opacity: 0.2;
+    font-weight: 800;
+  }
+  
+  .qa-answer {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(76,175,80,0.05);
+    border-radius: 12px;
+    position: relative;
+    margin-left: 0rem;
+  }
+  
+  .answer-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #37474f;
+    position: relative;
+    padding-left: 2rem;
+  }
+  
+  .answer-text:before {
+    content: "➤";
+    position: absolute;
+    left: 0;
+    color: #308030;
+    font-size: 1.2em;
+    top: 0.1em;
+  }
+
+  @media (max-width: 480px) {
+    .qa-card {
+      padding: 1.2rem;
+      margin: 1.5rem 0;
+      border-radius: 12px;
+    }
+
+    .q-marker {
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .q-number {
+      font-size: 1.5rem !important;
+      min-width: 40px;
+    }
+
+    .q-icon, .a-icon {
+      width: 36px;
+      height: 36px;
+      font-size: 1.4rem;
+      border-radius: 8px;
+    }
+
+    .question-text {
+      font-size: 1.15rem;
+      line-height: 1.4;
+      padding-left: 1.5rem;
+    }
+
+    .qa-answer {
+      margin: 1.2rem 0 0 0;
+      padding: 1rem;
+      border-radius: 10px;
+      gap: 1rem;
+    }
+
+    .answer-text {
+      font-size: 1rem;
+      line-height: 1.6;
+      padding-left: 1.5rem;
+    }
+
+    .answer-text:before {
+      left: -0.2rem;
+    }
+
+    .qa-card:before {
+      width: 3px;
+    }
+
+    p {
+      margin-bottom: 0.8em !important;
+    }
+
+    .title.is-3 {
+      font-size: 1.5rem !important;
+      margin-bottom: 2rem !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .qa-card {
+      padding: 1.5rem;
+    }
+    @media (max-width: 480px) {
+      .qa-card {
+        padding: 1.2rem;
+      }
+    }
+  }
+  
+  /* @media (max-width: 768px) {
+    .qa-card {
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .qa-answer {
+      margin-left: 0;
+    }
+    .question-text {
+      padding-left: 0;
+    }
+    .question-text:before {
+      display: none;
+    }
+  } */
+</style>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Fully Open-Source -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">BibTeX</h2>
+        <div class="content has-text-justified">
+          <pre><code>
+              bibtex
+</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+</body>
+</html>
