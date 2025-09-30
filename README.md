@@ -1,4 +1,4 @@
-# Q-Tuning: Winning the Pruning Gamble: A Unified Approach to Joint Sample and Token Pruning for Efficient Supervised Fine-Tuning
+# (Q-Tuning) Winning the Pruning Gamble: A Unified Approach to Joint Sample and Token Pruning for Efficient Supervised Fine-Tuning
 
 ## 📄 Paper Abstract
 
