@@ -93,9 +93,4 @@ Please stay tuned for the official release!
 
 **Contact**: ``shaobowang1009@sjtu.edu.cn``
 
-## 🔗 Links
-
-- **arXiv Paper**: [Coming Soon]  
-- **GitHub**: [https://github.com/Q-tuning/Q-tuning.git](https://github.com/Q-tuning/Q-tuning.git)
-
 
