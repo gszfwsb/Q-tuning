@@ -78,11 +78,14 @@ Please stay tuned for the official release!
 ## 📚 Citation
 
 ```bibtex
-@article{wang2024qtuning,
-  title={Winning the Pruning Gamble: A Unified Approach to Joint Sample and Token Pruning for Efficient Supervised Fine-Tuning},
-  author={Wang, Shaobo and Wang, Jiaming and Zhang, Jiajun and Wang, Cong and Min, Yue and Wen, Zichen and Huang, Fei and Jiang, Huiqiang and Lin, Junyang and Liu, Dayiheng and Zhang, Linfeng},
-  journal={arXiv preprint},
-  year={2024}
+@misc{wang2025winningpruninggambleunified,
+      title={Winning the Pruning Gamble: A Unified Approach to Joint Sample and Token Pruning for Efficient Supervised Fine-Tuning}, 
+      author={Shaobo Wang and Jiaming Wang and Jiajun Zhang and Cong Wang and Yue Min and Zichen Wen and Fei Huang and Huiqiang Jiang and Junyang Lin and Dayiheng Liu and Linfeng Zhang},
+      year={2025},
+      eprint={2509.23873},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2509.23873}, 
 }
 ```
 
